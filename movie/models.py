@@ -93,7 +93,7 @@ class Movie(models.Model):
 class MovieShots(models.Model):
     """Кадры из фильма"""
     title = models.CharField("Заголовок", max_length=100)
-    description = models.TextField("Описание")
+    description = models.TextField("Описание", blank=True)
     image = models.ImageField("Изображение", upload_to="movie_shots/")
     movie = models.ForeignKey(Movie, verbose_name="Фильм", on_delete=models.CASCADE)
 
@@ -140,7 +140,7 @@ class Review(models.Model):
     parent = models.ForeignKey(
         'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True
     )
-    movie = models.ForeignKey(Movie, verbose_name="фильм", on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, verbose_name="фильм", on_delete=models.CASCADE, related_name='reviews')
 
     def __str__(self):
         return f"{self.name} - {self.movie}"

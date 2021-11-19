@@ -6,13 +6,6 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .models import Category, Genre, Movie, MovieShots, Actor, Rating, RatingStar, Review
 
 
-class MovieAdminForm(forms.ModelForm):
-    """Форма с виджетом ckeditor"""
-    description = forms.CharField(label="Описание", widget=CKEditorUploadingWidget())
-
-    class Meta:
-        model = Movie
-        fields = '__all__'
 
 
 @admin.register(Category)
@@ -51,29 +44,8 @@ class MovieAdmin(admin.ModelAdmin):
     save_as = True
     list_editable = ("draft",)
     actions = ["publish", "unpublish"]
-    form = MovieAdminForm
     readonly_fields = ("get_image",)
-    fieldsets = (
-        (None, {
-            "fields": (("title", "tagline"),)
-        }),
-        (None, {
-            "fields": ("description", ("poster", "get_image"))
-        }),
-        (None, {
-            "fields": (("year", "world_premiere", "country"),)
-        }),
-        ("Actors", {
-            "classes": ("collapse",),
-            "fields": (("actors", "directors", "genres", "category"),)
-        }),
-        (None, {
-            "fields": (("budget", "fees_in_usa", "fess_in_world"),)
-        }),
-        ("Options", {
-            "fields": (("url", "draft"),)
-        }),
-    )
+ 
 
     def get_image(self, obj):
         return mark_safe(f'<img src={obj.poster.url} width="100" height="110"')
