@@ -1,13 +1,13 @@
 from django.db import models
-from django.db.models import query
-from django.db.models.fields import DurationField
-from rest_framework import serializers, generics
+from rest_framework import generics, permissions
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .models import Movie, Actor
+from .models import Movie, Actor, Review
 from .serializers import ActorDetailSerializer, CreateRatingSerializer, MovieListSerializer, \
     MovieDetailSerializer, ReviewCreateSerializer, ActorListSerializer, \
     ActorDetailSerializer
+
+from .permission import IsSuperUser
 
 from .services import get_client_ip, MovieFilter
 
@@ -16,8 +16,9 @@ class MovieListView(generics.ListAPIView):
     serializer_class = MovieListSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MovieFilter
-
-    def get_queryset(self):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):          
         movies = Movie.objects.filter(draft=False).annotate(
            rating_user=models.Count("ratings", 
                                     filter=models.Q(ratings__ip=get_client_ip(self.request))) 
@@ -31,12 +32,22 @@ class MovieDetailView(generics.RetrieveAPIView):
     """Детайльный просмотр фильмов"""
     queryset = Movie.objects.filter(draft=False)
     serializer_class = MovieDetailSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+
+class ReviewDestroy(generics.DestroyAPIView):
+    """Удаление отзывов"""
+    queryset = Review.objects.all()
+    permissions_class = [permissions.IsAdminUser]
 
 
 
 class ReviewCreateView(generics.CreateAPIView):
     """Добавление отзывов"""
     serializer_class = ReviewCreateSerializer
+    permissions_class = [IsSuperUser]
+
        
 
 
