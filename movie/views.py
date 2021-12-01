@@ -16,7 +16,7 @@ class MovieListView(generics.ListAPIView):
     serializer_class = MovieListSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MovieFilter
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):          
         movies = Movie.objects.filter(draft=False).annotate(
@@ -32,7 +32,7 @@ class MovieDetailView(generics.RetrieveAPIView):
     """Детайльный просмотр фильмов"""
     queryset = Movie.objects.filter(draft=False)
     serializer_class = MovieDetailSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 
