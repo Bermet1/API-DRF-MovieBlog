@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from knox import views as knox_views
 from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = format_suffix_patterns([
@@ -9,6 +10,11 @@ urlpatterns = format_suffix_patterns([
     path('rating/', views.AddStarRatingViewSet.as_view({'post':'create'})),
     path('actors/', views.ActorViewSet.as_view({'get': 'list'})),
     path('actors/<int:pk>/', views.ActorViewSet.as_view({'get': 'retrieve'})),
+
+    path('register/', views.RegisterAPI.as_view(), name='register'),
+    path('login/', views.LoginAPI.as_view(), name='login'),
+    path('logout/', knox_views.LogoutView.as_view(), name='logout'),
+    path('logoutall/', knox_views.LogoutAllView.as_view(), name='logoutall'),
 ])
 
 
